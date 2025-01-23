@@ -27,8 +27,8 @@
 namespace app {
 	
 	function initialize(): void {
-		getElem("loading").style.display = "none";
-		getElem("loaded").style.removeProperty("display");
+		getElem("loading").hidden = true;
+		getElem("loaded").hidden = false;
 		let elems = document.querySelectorAll("input[type=number], input[type=text], textarea");
 		for (let el of elems) {
 			if (el.id.indexOf("version-") != 0)
@@ -46,11 +46,10 @@ namespace app {
 		const bitmapOutput: boolean = getInput("output-format-bitmap").checked;
 		const scaleRow : HTMLElement = getElem("scale-row");
 		let download = getElem("download") as HTMLAnchorElement;
+		scaleRow.hidden = !bitmapOutput;
 		if (bitmapOutput) {
-			scaleRow.style.removeProperty("display");
 			download.download = "qr-code.png";
 		} else {
-			scaleRow.style.display = "none";
 			download.download = "qr-code.svg";
 		}
 		download.removeAttribute("href");
@@ -58,7 +57,7 @@ namespace app {
 		// Reset output images in case of early termination
 		const canvas = getElem("qrcode-canvas") as HTMLCanvasElement;
 		const svg = (document.getElementById("qrcode-svg") as Element) as SVGElement;
-		canvas.style.display = "none";
+		canvas.hidden = true;
 		svg.style.display = "none";
 		
 		// Returns a QrCode.Ecc object based on the radio buttons in the HTML form.
@@ -94,7 +93,7 @@ namespace app {
 			if (scale <= 0 || scale > 30)
 				return;
 			drawCanvas(qr, scale, border, lightColor, darkColor, canvas);
-			canvas.style.removeProperty("display");
+			canvas.hidden = false;
 			download.href = canvas.toDataURL("image/png");
 		} else {
 			const code: string = toSvgString(qr, border, lightColor, darkColor);
